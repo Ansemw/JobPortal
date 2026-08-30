@@ -27,12 +27,12 @@ public class CompanyServiceImpl implements ICompanyService {
     public List<CompanyDto> getAllCompanies() {
 
         List<Company> companies= companyRepository.findAll();
-        List<CompanyDto> dto=companies.stream().map(this::transaformToDto).toList();
+        List<CompanyDto> dto=companies.stream().map(this::transformToDto).toList();
         return dto;
     }
 
     // Copies the fields of a Company entity into a new CompanyDto.
-    private CompanyDto transaformToDto(Company company) {
+    private CompanyDto transformToDto(Company company) {
         return new CompanyDto(
                 company.getId(),
                 company.getName(),

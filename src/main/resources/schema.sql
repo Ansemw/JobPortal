@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS companies (
     rating DECIMAL(3,2) NOT NULL,
     locations VARCHAR(1000),
     founded INT NOT NULL,
-    description TEXT,
+    description TINYTEXT,
     employees INT,
     website VARCHAR(500),
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
