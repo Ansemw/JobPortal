@@ -3,9 +3,12 @@ package com.backend.jobportal.contact.controller;
 
 import com.backend.jobportal.contact.dto.ContactDto;
 import com.backend.jobportal.contact.service.IContactService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,14 +21,15 @@ public class ContactController {
     private final IContactService contactService;
 
     // Handles GET requests for the list of all contacts and returns them as DTOs.
-    @GetMapping(version = "1.0")
+    @GetMapping(value="",version = "1.0")
     public ResponseEntity<List<ContactDto>> getAllContacts() {
         List<ContactDto> contacts = contactService.getAllContacts();
         return ResponseEntity.ok().body(contacts);
     }
 
     @PostMapping(version = "1.0")
-    public ResponseEntity<String> saveContact(@RequestBody ContactDto contactDto) {
+    public ResponseEntity<String> saveContact(@RequestBody @Valid ContactDto contactDto) {
+
 
         boolean isSaved=contactService.saveContact(contactDto);
         if (isSaved) {
@@ -35,5 +39,10 @@ public class ContactController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save contact");
         }
 
+    }
+
+    @GetMapping(value = "/open", version = "1.0")
+    public ResponseEntity<String> fetchOpenContacts(@RequestParam @Validated @NotBlank(message = "Status can't be blank") String status) {
+        return ResponseEntity.ok("These are the contacts with given status "+ status);
     }
 }

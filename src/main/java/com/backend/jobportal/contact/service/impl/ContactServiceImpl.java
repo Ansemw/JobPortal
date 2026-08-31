@@ -47,8 +47,10 @@ public class ContactServiceImpl implements IContactService {
         contact.setName(contactDto.name());
         contact.setSubject(contactDto.subject());
         contact.setUserType(contactDto.userType());
+        /*
         contact.setCreatedAt(Instant.now());
         contact.setCreatedBy("System");
+        */
         contact.setStatus("NEW");
         return contact;
     }
