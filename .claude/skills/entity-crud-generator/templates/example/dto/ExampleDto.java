@@ -10,7 +10,6 @@ public record ExampleDto(
         String subject,
         String message,
         String userType,
-        String status,
-        Instant createdAt
+        String status
 ) {
 }

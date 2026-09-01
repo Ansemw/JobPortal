@@ -4,6 +4,8 @@ import com.backend.jobportal.company.dto.CompanyDto;
 import com.backend.jobportal.company.repository.CompanyRepository;
 import com.backend.jobportal.company.service.ICompanyService;
 import com.backend.jobportal.entity.Company;
+import com.backend.jobportal.entity.Job;
+import com.backend.jobportal.job.dto.JobDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +29,12 @@ public class CompanyServiceImpl implements ICompanyService {
     public List<CompanyDto> getAllCompanies() {
 
         List<Company> companies= companyRepository.findAll();
-        List<CompanyDto> dto=companies.stream().map(this::transformToDto).toList();
+        List<CompanyDto> dto=companies.stream().map(this::transformCompanyToDto).toList();
         return dto;
     }
 
     // Copies the fields of a Company entity into a new CompanyDto.
-    private CompanyDto transformToDto(Company company) {
+    private CompanyDto transformCompanyToDto(Company company) {
         return new CompanyDto(
                 company.getId(),
                 company.getName(),
@@ -45,7 +47,37 @@ public class CompanyServiceImpl implements ICompanyService {
                 company.getDescription(),
                 company.getEmployees(),
                 company.getWebsite(),
-                company.getCreatedAt()
+                company.getCreatedAt(),
+                company.getJobs().stream().map(job -> transformJobToDto(job)).collect(Collectors.toList())
+        );
+    }
+
+    private JobDto transformJobToDto(Job job) {
+        return new JobDto(
+                job.getId(),
+                job.getTitle(),
+                job.getCompany().getId(),
+                job.getCompany().getName(),
+                job.getCompany().getLogo(),
+                job.getLocation(),
+                job.getWorkType(),
+                job.getJobType(),
+                job.getCategory(),
+                job.getExperienceLevel(),
+                job.getSalaryMin(),
+                job.getSalaryMax(),
+                job.getSalaryCurrency(),
+                job.getSalaryPeriod(),
+                job.getDescription(),
+                job.getRequirements(),
+                job.getBenefits(),
+                job.getPostedDate(),
+                job.getApplicationDeadline(),
+                job.getApplicationsCount(),
+                job.getFeatured(),
+                job.getUrgent(),
+                job.getRemote(),
+                job.getStatus()
         );
     }
 
