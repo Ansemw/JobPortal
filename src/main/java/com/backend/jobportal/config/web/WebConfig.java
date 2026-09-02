@@ -29,7 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 
     // Allows the local React app (localhost:5173) to call the /api/** endpoints from the browser.
-    @Override
+   /* @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOrigins("http://localhost:5173")
@@ -37,5 +37,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .exposedHeaders("*")
                 .allowCredentials(true).maxAge(3600);
-    }
+    }*/
 }

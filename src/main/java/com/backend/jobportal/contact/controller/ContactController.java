@@ -20,14 +20,9 @@ public class ContactController {
 
     private final IContactService contactService;
 
-    // Handles GET requests for the list of all contacts and returns them as DTOs.
-    @GetMapping(value="",version = "1.0")
-    public ResponseEntity<List<ContactDto>> getAllContacts() {
-        List<ContactDto> contacts = contactService.getAllContacts();
-        return ResponseEntity.ok().body(contacts);
-    }
 
-    @PostMapping(version = "1.0")
+
+    @PostMapping(path = "/public", version = "1.0")
     public ResponseEntity<String> saveContact(@RequestBody @Valid ContactDto contactDto) {
 
 
@@ -41,7 +36,7 @@ public class ContactController {
 
     }
 
-    @GetMapping(value = "/open", version = "1.0")
+    @GetMapping(path = "/open", version = "1.0")
     public ResponseEntity<String> fetchOpenContacts(@RequestParam @Validated @NotBlank(message = "Status can't be blank") String status) {
         return ResponseEntity.ok("These are the contacts with given status "+ status);
     }

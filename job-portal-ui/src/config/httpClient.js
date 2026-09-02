@@ -29,8 +29,8 @@ const httpClient = axios.create({
 const PUBLIC_ENDPOINTS = [
   "/auth/login",
   "/auth/register",
-  "/companies",
-  "/contacts",
+  "/companies/public",
+  "/contacts/public",
 ];
 
 /**

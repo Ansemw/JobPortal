@@ -22,7 +22,7 @@ export const getAcceptHeader = (version = DEFAULT_API_VERSION) =>
 // API Endpoints
 export const API_ENDPOINTS = {
   // Company endpoints
-  COMPANIES: "/companies",
+  COMPANIES: "/companies/public",
   COMPANY_BY_ID: (id) => `/companies/${id}`,
 
   // Job endpoints (placeholder for future use)
@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
   UPDATE_PROFILE: "/profile",
 
   // Contact endpoints
-  CONTACTS: "/contacts",
+  CONTACTS: "/contacts/public",
   CONTACT_BY_ID: (id) => `/contacts/${id}`,
   ADMIN_CONTACTS: "/admin/contacts",
   ADMIN_CONTACTS_SORT: "/admin/contacts/sort",
