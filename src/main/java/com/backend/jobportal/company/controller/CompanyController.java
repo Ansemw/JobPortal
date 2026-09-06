@@ -29,5 +29,9 @@ public class CompanyController {
         List<CompanyDto> companies = companyService.getAllCompanies();
         return  ResponseEntity.ok().body(companies);
     }
-
+    @GetMapping(path = "/secured", version = "1.0")
+    public ResponseEntity<List<CompanyDto>> getAllCompaniesSecured() {
+        List<CompanyDto> companies = companyService.getAllCompanies();
+        return  ResponseEntity.ok().body(companies);
+    }
 }
