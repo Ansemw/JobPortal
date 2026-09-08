@@ -62,24 +62,24 @@ private final List<String> regexPaths;
             try{
                 String jwt =  authHeader.substring(7);
                 Environment env = getEnvironment();
-                if(env!=null) {
+
                     String secret = env.getProperty(ApplicationConstant.JWT_SECRET_KEY
                             , ApplicationConstant.JWT_SECRET_DEFAULT_VALUE);
 
                     SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-                    if(secretKey!=null){
+
 
                         Claims claims = Jwts.parser().verifyWith(secretKey)
                                 .build()
                                 .parseSignedClaims(jwt).getPayload();
 
-                        String username = String.valueOf(claims.get("username"));
+                        String username = String.valueOf(claims.get("email"));
                         String roles = String.valueOf(claims.get("roles"));
                         Authentication authentication = new UsernamePasswordAuthenticationToken(username,
                                 null, AuthorityUtils.commaSeparatedStringToAuthorityList(roles));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
-                    }
-                }
+
+
             }catch(ExpiredJwtException exception){
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid JWT token");

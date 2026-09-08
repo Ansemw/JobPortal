@@ -1,4 +1,4 @@
-package com.backend.jobportal.auth.dto;
+package com.backend.jobportal.user.auth.dto;
 
 import com.backend.jobportal.user.dto.UserDto;
 

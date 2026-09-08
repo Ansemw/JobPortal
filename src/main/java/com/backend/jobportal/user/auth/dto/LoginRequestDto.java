@@ -1,4 +1,4 @@
-package com.backend.jobportal.auth.dto;
+package com.backend.jobportal.user.auth.dto;
 
 public record LoginRequestDto(
         String userName,

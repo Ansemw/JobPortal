@@ -9060,3 +9060,12 @@ VALUES ('Operations Director', 7, 'Remote', 'Hybrid', 'Freelance',
         '["Process Improvement", "Inventory Management", "Six Sigma", "Project Management", "Operations Research"]', '["Mental Health Support", "Bonus Opportunities", "Vision Insurance", "Flexible Schedule", "Disability Insurance", "Education Assistance", "Wellness Programs"]', '2025-10-14 22:27:59',
         '2025-11-12 11:27:59', 491, 0, 0,
         1, 'ACTIVE', 'SYSTEM');
+
+INSERT INTO roles (name, created_at, created_by)
+VALUES ('ROLE_JOB_SEEKER', CURRENT_TIMESTAMP, 'DBA');
+
+INSERT INTO roles (name, created_at, created_by)
+VALUES ('ROLE_EMPLOYER', CURRENT_TIMESTAMP, 'DBA');
+
+INSERT INTO roles (name, created_at, created_by)
+VALUES ('ROLE_ADMIN', CURRENT_TIMESTAMP, 'DBA');
