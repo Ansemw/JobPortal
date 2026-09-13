@@ -13,6 +13,7 @@ public class ApplicationConstant {
     public static final String ROLE_EMPLOYER = "ROLE_EMPLOYER";
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     public static final String STATUS_SUCCESS = "SUCCESS";
+    public static final String STATUS_ACTIVE = "ACTIVE";
 
 
 }

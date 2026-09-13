@@ -3,6 +3,7 @@ package com.backend.jobportal.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -14,6 +15,11 @@ import java.util.List;
 @Table(name = "companies")
 @Getter
 @Setter
+@NamedQueries({
+        @NamedQuery(name = "Company.findAllByJobStatus",
+        query = "Select distinct c from Company c join fetch c.jobs j where j.status = :status")
+
+})
 public class Company extends BaseEntity{
 
     @Id
@@ -53,6 +59,7 @@ public class Company extends BaseEntity{
     private String website;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 50)
     private List<Job> jobs = new ArrayList<>();
 
 }

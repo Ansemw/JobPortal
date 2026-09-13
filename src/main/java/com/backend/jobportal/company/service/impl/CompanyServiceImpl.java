@@ -3,6 +3,7 @@ package com.backend.jobportal.company.service.impl;
 import com.backend.jobportal.company.dto.CompanyDto;
 import com.backend.jobportal.company.repository.CompanyRepository;
 import com.backend.jobportal.company.service.ICompanyService;
+import com.backend.jobportal.constants.ApplicationConstant;
 import com.backend.jobportal.entity.Company;
 import com.backend.jobportal.entity.Job;
 import com.backend.jobportal.job.dto.JobDto;
@@ -28,7 +29,7 @@ public class CompanyServiceImpl implements ICompanyService {
     @Override
     public List<CompanyDto> getAllCompanies() {
 
-        List<Company> companies= companyRepository.findAll();
+        List<Company> companies= companyRepository.findAllByJobStatus(ApplicationConstant.STATUS_ACTIVE);
         List<CompanyDto> dto=companies.stream().map(this::transformCompanyToDto).toList();
         return dto;
     }
