@@ -14,6 +14,11 @@ public class ApplicationConstant {
     public static final String ROLE_ADMIN = "ROLE_ADMIN";
     public static final String STATUS_SUCCESS = "SUCCESS";
     public static final String STATUS_ACTIVE = "ACTIVE";
+    public static final String STATUS_NEW = "NEW";
+    public static final String STATUS_CLOSED = "CLOSED";
+    public static final String SYSTEM = "SYSTEM";
+
+
 
 
 }

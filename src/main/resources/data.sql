@@ -9069,3 +9069,20 @@ VALUES ('ROLE_EMPLOYER', CURRENT_TIMESTAMP, 'DBA');
 
 INSERT INTO roles (name, created_at, created_by)
 VALUES ('ROLE_ADMIN', CURRENT_TIMESTAMP, 'DBA');
+-- Sample data for contacts table
+INSERT INTO contacts (name, email, user_type, subject, message, status, created_at, created_by) VALUES
+('Ravi Kumar', 'ravi.kumar@example.com', 'Job Seeker', 'Issue with application status', 'I applied for a Software Engineer role two weeks ago and have not heard back. Could you please check the status?', 'NEW', '2026-08-01 09:15:00', 'System'),
+('Priya Sharma', 'priya.sharma@example.com', 'Employer', 'Unable to post a new job listing', 'I keep getting an error when trying to publish a new job posting for my company. Please assist.', 'NEW', '2026-08-02 11:30:00', 'System'),
+('John Doe', 'john.doe@example.com', 'Job Seeker', 'Resume upload failing', 'Every time I try to upload my resume in PDF format, the upload fails with a generic error message.', 'NEW', '2026-08-03 14:45:00', 'System'),
+('Emily Clark', 'emily.clark@example.com', 'Employer', 'Billing question for premium plan', 'We were charged twice for our premium employer subscription this month. Please help resolve this.', 'NEW', '2026-08-04 08:20:00', 'System'),
+('Amit Verma', 'amit.verma@example.com', 'Job Seeker', 'Password reset not working', 'The password reset link sent to my email has expired every time I request a new one.', 'NEW', '2026-08-05 16:10:00', 'System'),
+('Sara Ahmed', 'sara.ahmed@example.com', 'Other', 'Partnership inquiry', 'We run a career counseling service and would like to explore a partnership with your platform.', 'NEW', '2026-08-06 10:00:00', 'System'),
+('Michael Brown', 'michael.brown@example.com', 'Job Seeker', 'Duplicate job listings', 'I noticed the same job posting appearing multiple times in search results. Please look into this.', 'NEW', '2026-08-07 13:25:00', 'System'),
+('Lisa Wong', 'lisa.wong@example.com', 'Employer', 'Request to feature job posting', 'Can you let me know the process and cost for featuring our job listing on the homepage?', 'NEW', '2026-08-08 09:50:00', 'System'),
+('David Miller', 'david.miller@example.com', 'Job Seeker', 'Profile not saving changes', 'Whenever I update my profile information and click save, the changes are not persisted.', 'NEW', '2026-08-09 15:05:00', 'System'),
+('Anita Desai', 'anita.desai@example.com', 'Job Seeker', 'Question about interview scheduling', 'An employer wants to schedule an interview but I cannot find where to confirm the time slot.', 'NEW', '2026-08-10 12:40:00', 'System'),
+('Robert Lee', 'robert.lee@example.com', 'Employer', 'Need help with bulk candidate export', 'Is there a way to export all applicant details for a job posting into a spreadsheet?', 'NEW', '2026-08-11 17:15:00', 'System'),
+('Neha Gupta', 'neha.gupta@example.com', 'Other', 'Feedback on website design', 'I really enjoy using the platform but think the mobile navigation could be improved.', 'NEW', '2026-08-12 08:35:00', 'System'),
+('Chris Evans', 'chris.evans@example.com', 'Job Seeker', 'Account locked after login attempts', 'My account got locked after a few failed login attempts. Please help me regain access.', 'NEW', '2026-08-13 11:55:00', 'System'),
+('Sunita Rao', 'sunita.rao@example.com', 'Employer', 'Incorrect company details displayed', 'Our company profile shows an outdated logo and address. How can we update this information?', 'NEW', '2026-08-14 14:20:00', 'System'),
+('Tom Walker', 'tom.walker@example.com', 'Job Seeker', 'Notification emails not received', 'I am not receiving email notifications for job alerts even though they are enabled in settings.', 'NEW', '2026-08-15 10:10:00', 'System');
