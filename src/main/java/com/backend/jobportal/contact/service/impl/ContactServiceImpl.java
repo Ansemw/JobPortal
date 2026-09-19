@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class ContactServiceImpl implements IContactService {
 
 
@@ -38,6 +40,7 @@ public class ContactServiceImpl implements IContactService {
     }
 
     @Override
+    @Transactional
     public boolean saveContact(ContactDto contactDto) {
 
         boolean result = false;
@@ -79,6 +82,7 @@ public class ContactServiceImpl implements IContactService {
     }
 
     @Override
+    @Transactional
     public boolean closeContactMessage(Long id) {
 
         Contact contact = contactRepository.findById(id).orElse(null);

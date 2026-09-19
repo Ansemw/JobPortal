@@ -161,14 +161,14 @@ export const AuthProvider = ({ children }) => {
 
       // Call backend authentication API
       const response = await httpClient.post(API_ENDPOINTS.LOGIN, {
-        username: email,
+        userName: email,
         password: password
       });
 
       console.log('[Auth] Login response:', response.data);
 
       if (response.data && response.data.jwtToken) {
-        const { jwtToken, user: userData, message } = response.data;
+        const { jwtToken, userDto: userData, message } = response.data;
 
         // Store JWT token in localStorage
         localStorage.setItem('authToken', jwtToken);

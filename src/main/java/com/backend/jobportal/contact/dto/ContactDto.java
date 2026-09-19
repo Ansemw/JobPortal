@@ -23,7 +23,7 @@ public record ContactDto(
         String subject,
 
         @NotBlank(message = "User Type can't be empty")
-        @Pattern(regexp = "Job Seeker|Employer|Other")
+        @Pattern(regexp = "jobseeker|employer|other")
         String userType
 ) {
 }
