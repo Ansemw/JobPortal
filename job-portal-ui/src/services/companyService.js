@@ -83,6 +83,36 @@ export const fetchCompanies = async () => {
 };
 
 /**
+ * Fetch all companies from the backend for admin management (unfiltered, includes
+ * companies with no jobs). Uses the admin endpoint rather than the public one.
+ */
+export const fetchCompaniesAdmin = async () => {
+  try {
+    const response = await httpClient.get(API_ENDPOINTS.ADMIN_COMPANIES);
+    const data = response.data;
+
+    // Transform the backend data to match frontend structure
+    return data.map((company) => ({
+      id: company.id,
+      name: company.name,
+      logo: company.logo,
+      industry: company.industry,
+      size: company.size,
+      rating: company.rating,
+      locations: company.locations ? company.locations.split(",") : [],
+      founded: company.founded,
+      description: company.description,
+      employees: company.employees,
+      website: company.website,
+      jobs: company.jobs ? company.jobs.map(transformJob) : [],
+    }));
+  } catch (error) {
+    console.error("Error fetching companies for admin:", error);
+    throw error;
+  }
+};
+
+/**
  * Fetch all jobs from all companies
  */
 export const fetchAllJobs = async () => {

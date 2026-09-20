@@ -24,6 +24,8 @@ export const API_ENDPOINTS = {
   // Company endpoints
   COMPANIES: "/companies/public",
   COMPANY_BY_ID: (id) => `/companies/${id}`,
+  ADMIN_COMPANIES: "/companies/admin",
+  ADMIN_COMPANY_BY_ID: (id) => `/companies/${id}/admin`,
 
   // Job endpoints (placeholder for future use)
   JOBS: "/jobs",
@@ -50,9 +52,9 @@ export const API_ENDPOINTS = {
   CSRF_TOKEN: "/csrf-token/public",
 
   // Admin User Management endpoints
-  SEARCH_USER_BY_EMAIL: "/admin/users/search",
-  ELEVATE_TO_EMPLOYER: (userId) => `/admin/users/${userId}/elevate-to-employer`,
-  ASSIGN_COMPANY_TO_EMPLOYER: (userId) => `/admin/users/${userId}/assign-company`,
+  SEARCH_USER_BY_EMAIL: "/user/search/admin",
+  ELEVATE_TO_EMPLOYER: (userId) => `/user/${userId}/employer/role/admin`,
+  ASSIGN_COMPANY_TO_EMPLOYER: (userId, companyId) => `/user/${userId}/company/${companyId}/admin`,
 
   // Employer Job Management endpoints
   EMPLOYER_JOBS: "/employer/jobs",

@@ -36,6 +36,76 @@ public class CompanyServiceImpl implements ICompanyService {
         return dto;
     }
 
+    @Override
+    public List<CompanyDto> getAllCompaniesForAdmin() {
+
+        List<Company> companies= companyRepository.findAll();
+        List<CompanyDto> dto=companies.stream().map(this::transformCompanyToDtoAdmin).toList();
+        return dto;
+    }
+
+    // Builds a new Company entity from the incoming DTO, saves it, and returns the persisted row as a DTO.
+    @Override
+    @Transactional
+    public boolean createCompany(CompanyDto companyDto) {
+        Company company = transformDtoToCompany(companyDto);
+        Company savedCompany = companyRepository.save(company);
+        return savedCompany.getId() != null && savedCompany.getId() > 1;
+    }
+
+    // Updates the company identified by id with the fields present in companyDto via a
+    // bulk JPQL update (CompanyRepository.updateCompany), leaving id/createdAt/jobs untouched.
+    @Override
+    @Transactional
+    public boolean updateCompany(Long id, CompanyDto companyDto) {
+        int rowsAffected = companyRepository.updateCompany(
+                id,
+                companyDto.name(),
+                companyDto.logo(),
+                companyDto.industry(),
+                companyDto.size(),
+                companyDto.rating(),
+                companyDto.locations(),
+                companyDto.founded(),
+                companyDto.description(),
+                companyDto.employees(),
+                companyDto.website()
+        );
+        return rowsAffected > 0;
+    }
+
+    // Deletes the company identified by id, if one exists. Since Company.jobs cascades
+    // ALL/orphanRemoval, deleting a company also deletes its associated jobs.
+    @Override
+    @Transactional
+    public boolean deleteCompany(Long id) {
+        if (!companyRepository.existsById(id)) {
+            return false;
+        }
+        companyRepository.deleteById(id);
+        return true;
+    }
+
+    // Copies the writable fields of a CompanyDto into a brand-new Company entity.
+    // id/createdAt/updatedAt/createdBy/updatedBy are left untouched: id is DB-generated,
+    // and the audit columns are populated by Spring Data JPA auditing on insert.
+    // jobs is intentionally not copied here - a new company starts with no jobs, and
+    // jobs are created/attached separately through the Job side of the relationship.
+    private Company transformDtoToCompany(CompanyDto companyDto) {
+        Company company = new Company();
+        company.setName(companyDto.name());
+        company.setLogo(companyDto.logo());
+        company.setIndustry(companyDto.industry());
+        company.setSize(companyDto.size());
+        company.setRating(companyDto.rating());
+        company.setLocations(companyDto.locations());
+        company.setFounded(companyDto.founded());
+        company.setDescription(companyDto.description());
+        company.setEmployees(companyDto.employees());
+        company.setWebsite(companyDto.website());
+        return company;
+    }
+
     // Copies the fields of a Company entity into a new CompanyDto.
     private CompanyDto transformCompanyToDto(Company company) {
         return new CompanyDto(
@@ -54,7 +124,22 @@ public class CompanyServiceImpl implements ICompanyService {
                 company.getJobs().stream().map(job -> transformJobToDto(job)).collect(Collectors.toList())
         );
     }
-
+    private CompanyDto transformCompanyToDtoAdmin(Company company) {
+        return new CompanyDto(
+                company.getId(),
+                company.getName(),
+                company.getLogo(),
+                company.getIndustry(),
+                company.getSize(),
+                company.getRating(),
+                company.getLocations(),
+                company.getFounded(),
+                company.getDescription(),
+                company.getEmployees(),
+                company.getWebsite(),
+                company.getCreatedAt(),
+               null);
+    }
     private JobDto transformJobToDto(Job job) {
         return new JobDto(
                 job.getId(),

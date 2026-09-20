@@ -11,6 +11,8 @@ import java.time.Instant;
 @Table(name = "CONTACTS")
 @Getter
 @Setter
+
+
 public class Contact extends BaseEntity{
 
     @Id

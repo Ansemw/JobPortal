@@ -6,6 +6,7 @@ import com.backend.jobportal.contact.dto.ContactResponseDto;
 import com.backend.jobportal.contact.repository.ContactRepository;
 import com.backend.jobportal.contact.service.IContactService;
 import com.backend.jobportal.entity.Contact;
+import com.backend.jobportal.util.ApplicationUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,14 +86,17 @@ public class ContactServiceImpl implements IContactService {
     @Transactional
     public boolean closeContactMessage(Long id) {
 
-        Contact contact = contactRepository.findById(id).orElse(null);
+        int updatedRows = contactRepository.updateStatusById(id, ApplicationConstant.STATUS_CLOSED, ApplicationUtility.getLoggedInUser());
+
+        return updatedRows > 0;
+        /* Contact contact = contactRepository.findById(id).orElse(null);
         if(contact==null) return false;
 
         else{
             contact.setStatus(ApplicationConstant.STATUS_CLOSED);
             contactRepository.save(contact);
             return true;
-        }
+        }*/
     }
 
     private Contact transformToEntity(ContactDto contactDto) {

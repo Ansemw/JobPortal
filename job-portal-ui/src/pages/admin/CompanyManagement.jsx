@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import { useCompanies } from '../../contexts/CompaniesContext';
+import { fetchCompaniesAdmin } from '../../services/companyService';
 import httpClient from '../../config/httpClient';
 import { API_ENDPOINTS } from '../../config/api';
 
 const CompanyManagement = () => {
   const { theme } = useTheme();
-  const { companies: contextCompanies, loading: contextLoading, refetch } = useCompanies();
+  const [companies, setCompanies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [editingCompanyId, setEditingCompanyId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -26,9 +27,23 @@ const CompanyManagement = () => {
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
 
-  // Use companies from context - no need to fetch separately
-  const companies = contextCompanies;
-  const isLoading = contextLoading;
+  // Loads the full, unfiltered company list from the admin endpoint (includes companies with no jobs)
+  const loadCompanies = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await fetchCompaniesAdmin();
+      setCompanies(data);
+    } catch (err) {
+      console.error('Error loading companies:', err);
+      setError('Failed to load companies. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCompanies();
+  }, [loadCompanies]);
 
   const handleSubmit = async (e, companyId = null) => {
     e.preventDefault();
@@ -48,13 +63,13 @@ const CompanyManagement = () => {
       if (companyId) {
         // Update existing company
         await httpClient.put(
-          API_ENDPOINTS.COMPANY_BY_ID(companyId),
+          API_ENDPOINTS.ADMIN_COMPANY_BY_ID(companyId),
           dataToSend
         );
         setSuccess('Company updated successfully');
       } else {
         // Create new company
-        await httpClient.post(API_ENDPOINTS.COMPANIES, dataToSend);
+        await httpClient.post(API_ENDPOINTS.ADMIN_COMPANIES, dataToSend);
         setSuccess('Company created successfully');
       }
 
@@ -64,7 +79,7 @@ const CompanyManagement = () => {
       setIsAddingNew(false);
 
       // Refresh companies data from backend to get latest
-      await refetch();
+      await loadCompanies();
 
       // Hide success message after 3 seconds
       setTimeout(() => setSuccess(''), 3000);
@@ -87,7 +102,7 @@ const CompanyManagement = () => {
       industry: company.industry || '',
       size: company.size || '',
       rating: company.rating || '',
-      locations: company.locations || '',
+      locations: Array.isArray(company.locations) ? company.locations.join(', ') : (company.locations || ''),
       founded: company.founded || '',
       description: company.description || '',
       employees: company.employees || '',
@@ -118,12 +133,12 @@ const CompanyManagement = () => {
     if (!deleteConfirmation) return;
 
     try {
-      await httpClient.delete(API_ENDPOINTS.COMPANY_BY_ID(deleteConfirmation.id));
+      await httpClient.delete(API_ENDPOINTS.ADMIN_COMPANY_BY_ID(deleteConfirmation.id));
       setSuccess('Company deleted successfully');
       setDeleteConfirmation(null);
 
       // Refresh companies data from backend to get latest
-      await refetch();
+      await loadCompanies();
     } catch (err) {
       console.error('Error deleting company:', err);
       setError(err.response?.data?.message || 'Failed to delete company');

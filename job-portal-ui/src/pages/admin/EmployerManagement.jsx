@@ -32,9 +32,9 @@ const EmployerManagement = () => {
 
     try {
       setIsAssigning(true);
-      const response = await httpClient.put(API_ENDPOINTS.ASSIGN_COMPANY_TO_EMPLOYER(searchedUser.userId), {
-        companyId: parseInt(selectedCompanyId)
-      });
+      const response = await httpClient.patch(
+        API_ENDPOINTS.ASSIGN_COMPANY_TO_EMPLOYER(searchedUser.userId, selectedCompanyId)
+      );
       setSuccess(`Successfully assigned company to ${searchedUser.name}`);
       setSearchedUser(response.data);
     } catch (err) {
@@ -88,7 +88,7 @@ const EmployerManagement = () => {
     setSuccess('');
 
     try {
-      const response = await httpClient.put(API_ENDPOINTS.ELEVATE_TO_EMPLOYER(userId));
+      const response = await httpClient.patch(API_ENDPOINTS.ELEVATE_TO_EMPLOYER(userId));
       setSuccess(`Successfully elevated ${response.data.name} to ROLE_EMPLOYER`);
       setSearchedUser(response.data);
     } catch (err) {

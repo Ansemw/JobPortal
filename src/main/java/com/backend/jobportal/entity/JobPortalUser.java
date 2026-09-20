@@ -45,7 +45,7 @@ public class JobPortalUser extends BaseEntity {
     private Role role;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", insertable = false, updatable = false)
+    @JoinColumn(name = "company_id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Company company;
 
