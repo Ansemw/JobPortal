@@ -8,6 +8,8 @@ import com.backend.jobportal.entity.Company;
 import com.backend.jobportal.entity.Job;
 import com.backend.jobportal.job.dto.JobDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class CompanyServiceImpl implements ICompanyService {
 
     // Fetches every company from the database and converts each one into a CompanyDto.
     @Override
+    @Cacheable("companiesPublic")
     public List<CompanyDto> getAllCompanies() {
 
         List<Company> companies= companyRepository.findAllByJobStatus(ApplicationConstant.STATUS_ACTIVE);
@@ -37,6 +40,7 @@ public class CompanyServiceImpl implements ICompanyService {
     }
 
     @Override
+    @Cacheable("companiesAdmin")
     public List<CompanyDto> getAllCompaniesForAdmin() {
 
         List<Company> companies= companyRepository.findAll();
@@ -47,6 +51,7 @@ public class CompanyServiceImpl implements ICompanyService {
     // Builds a new Company entity from the incoming DTO, saves it, and returns the persisted row as a DTO.
     @Override
     @Transactional
+    @CacheEvict(value = {"companiesPublic", "companiesAdmin"}, allEntries = true)
     public boolean createCompany(CompanyDto companyDto) {
         Company company = transformDtoToCompany(companyDto);
         Company savedCompany = companyRepository.save(company);
@@ -57,6 +62,7 @@ public class CompanyServiceImpl implements ICompanyService {
     // bulk JPQL update (CompanyRepository.updateCompany), leaving id/createdAt/jobs untouched.
     @Override
     @Transactional
+    @CacheEvict(value = {"companiesPublic", "companiesAdmin"}, allEntries = true)
     public boolean updateCompany(Long id, CompanyDto companyDto) {
         int rowsAffected = companyRepository.updateCompany(
                 id,
@@ -78,6 +84,7 @@ public class CompanyServiceImpl implements ICompanyService {
     // ALL/orphanRemoval, deleting a company also deletes its associated jobs.
     @Override
     @Transactional
+    @CacheEvict(value = {"companiesPublic", "companiesAdmin"}, allEntries = true)
     public boolean deleteCompany(Long id) {
         if (!companyRepository.existsById(id)) {
             return false;

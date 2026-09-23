@@ -52,6 +52,9 @@ private final List<String> regexPaths;
 @Qualifier("adminPaths")
 private final List<String> adminPaths;
 
+@Qualifier("employerPaths")
+private final List<String> employerPaths;
+
 
 
 
@@ -66,6 +69,7 @@ private final List<String> adminPaths;
                     regexPaths.forEach(path -> requests.requestMatchers(RegexRequestMatcher.regexMatcher(path)).permitAll());
                     publicPaths.forEach(path -> requests.requestMatchers(path).permitAll());
                     adminPaths.forEach(path -> requests.requestMatchers(path).hasRole("ADMIN"));
+                    employerPaths.forEach(path -> requests.requestMatchers(path).hasRole("EMPLOYER"));
                     securedPaths.forEach(path -> requests.requestMatchers(path).authenticated());
 
                 })
