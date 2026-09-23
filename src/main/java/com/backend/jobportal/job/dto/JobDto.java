@@ -67,7 +67,6 @@ public record JobDto(
         Boolean urgent,
         Boolean remote,
 
-        @NotBlank(message = "Status can't be empty")
         @Pattern(regexp = "^(ACTIVE|CLOSED|DRAFT)$", message = "Status must be one of ACTIVE, CLOSED, DRAFT")
         String status
 

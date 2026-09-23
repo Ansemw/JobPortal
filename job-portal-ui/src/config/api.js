@@ -57,9 +57,9 @@ export const API_ENDPOINTS = {
   ASSIGN_COMPANY_TO_EMPLOYER: (userId, companyId) => `/user/${userId}/company/${companyId}/admin`,
 
   // Employer Job Management endpoints
-  EMPLOYER_JOBS: "/employer/jobs",
-  POST_JOB: "/employer/jobs",
-  UPDATE_JOB_STATUS: (jobId) => `/employer/jobs/${jobId}/status`,
+  EMPLOYER_JOBS: "/jobs/employer",
+  POST_JOB: "/jobs/employer",
+  UPDATE_JOB_STATUS: (jobId) => `/jobs/${jobId}/status/employer`,
 
   // Saved Jobs endpoints
   SAVED_JOBS: "/saved-jobs",
