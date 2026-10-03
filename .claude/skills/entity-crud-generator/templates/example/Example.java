@@ -1,66 +1,62 @@
 package com.backend.jobportal.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "examples")
+// Reference entity for the generator. Real entities live in com.backend.jobportal.entity and
+// extend BaseEntity, which supplies created_at/created_by/updated_at/updated_by via JPA auditing —
+// never redeclare those columns on the entity itself.
 @Getter
 @Setter
-public class Example {
+@Entity
+@Table(name = "examples")
+public class Example extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "NAME", nullable = false, unique = true)
+    // Owning side of a many-to-one relationship (see Job.company).
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "LOGO", length = 500)
-    private String logo;
-
-    @Column(name = "INDUSTRY", nullable = false, length = 100)
-    private String industry;
-
-    @Column(name = "SIZE", nullable = false, length = 50)
-    private String size;
-
-    @Column(name = "RATING", nullable = false, precision = 3, scale = 2)
-    private BigDecimal rating;
-
-    @Column(name = "LOCATIONS", length = 1000)
-    private String locations;
-
-    @Column(name = "FOUNDED", nullable = false)
-    private Integer founded;
-
-    @Lob
-    @Column(name = "DESCRIPTION")
-    private String description;
-
-    @Column(name = "EMPLOYEES")
-    private Integer employees;
-
-    @Column(name = "WEBSITE")
+    @Size(max = 500)
+    @Column(name = "website", length = 500)
     private String website;
 
-    @Column(name = "CREATED_AT", nullable = false)
-    private Instant createdAt;
+    @Column(name = "rating", precision = 3, scale = 2)
+    private BigDecimal rating;
 
-    @Column(name = "CREATED_BY", nullable = false, length = 20)
-    private String createdBy;
+    @Lob
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "UPDATED_AT")
-    private Instant updatedAt;
+    @Column(name = "deadline")
+    private Instant deadline;
 
-    @Column(name = "UPDATED_BY",  nullable = false, length = 20)
-    private String updatedBy;
-
+    // Enum-like String column — the DTO restricts it with a @Pattern regex.
+    @Size(max = 20)
+    @NotNull
+    @ColumnDefault("'DRAFT'")
+    @Column(name = "status", nullable = false, length = 20)
+    private String status;
 
 }

@@ -10,6 +10,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "jobs")
@@ -92,4 +94,9 @@ public class Job extends BaseEntity{
     @Column(name = "STATUS", nullable = false, length = 20)
     private String status;
 
+    @ManyToMany(mappedBy = "savedJobs")
+    Set<JobPortalUser> savedByUsers = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "job")
+    private Set<JobApplication> applications = new LinkedHashSet<>();
 }

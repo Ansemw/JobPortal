@@ -114,7 +114,7 @@ const SavedJobs = () => {
         ) : (
           <div className="grid grid-cols-1 gap-6">
             {savedJobs
-              .sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt))
+              .sort((a, b) => (b.savedAt && a.savedAt ? new Date(b.savedAt) - new Date(a.savedAt) : 0))
               .map((job) => (
               <div
                 key={job.id}
@@ -196,7 +196,7 @@ const SavedJobs = () => {
                           )}
                         </div>
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          Saved {getTimeAgo(job.savedAt)} • Posted {getTimeAgo(job.postedDate)}
+                          {job.savedAt && <>Saved {getTimeAgo(job.savedAt)} • </>}Posted {getTimeAgo(job.postedDate)}
                         </div>
                       </div>
                     </div>

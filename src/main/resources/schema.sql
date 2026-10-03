@@ -88,3 +88,52 @@ CREATE TABLE IF NOT EXISTS users (
     CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(id),
     CONSTRAINT fk_users_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
     );
+
+-- Create profiles table
+CREATE TABLE IF NOT EXISTS profiles (
+                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                        user_id BIGINT NOT NULL,
+                                        job_title VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    experience_level VARCHAR(50) NOT NULL,
+    professional_bio TEXT NOT NULL,
+    portfolio_website VARCHAR(500),
+    profile_picture MEDIUMBLOB,
+    profile_picture_name VARCHAR(255),
+    profile_picture_type VARCHAR(100),
+    resume MEDIUMBLOB,
+    resume_name VARCHAR(255),
+    resume_type VARCHAR(100),
+    created_at TIMESTAMP   DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by VARCHAR(20) NOT NULL,
+    updated_at TIMESTAMP   DEFAULT NULL,
+    updated_by VARCHAR(20) DEFAULT NULL,
+    CONSTRAINT fk_profile_user FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+CREATE TABLE IF NOT EXISTS saved_jobs (
+                                          user_id BIGINT NOT NULL,
+                                          job_id  BIGINT NOT NULL,
+                                          PRIMARY KEY (user_id, job_id),
+    CONSTRAINT fk_saved_jobs_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_saved_jobs_job FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE
+    );
+
+-- Create Jpb applications table
+
+CREATE TABLE IF NOT EXISTS job_applications (
+                                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                                user_id BIGINT NOT NULL,
+                                                job_id BIGINT NOT NULL,
+                                                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                                                status VARCHAR(50) DEFAULT 'PENDING' NOT NULL, -- PENDING, REVIEWED, SHORTLISTED, INTERVIEWED, OFFERED, REJECTED, WITHDRAWN
+    cover_letter TEXT,
+    notes TEXT, -- Internal notes from employer
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by VARCHAR(20) NOT NULL,
+    updated_at TIMESTAMP DEFAULT NULL,
+    updated_by VARCHAR(20) DEFAULT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_job_application (user_id, job_id) -- Prevent duplicate applications
+    );

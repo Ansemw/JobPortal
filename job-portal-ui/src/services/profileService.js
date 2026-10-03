@@ -36,7 +36,7 @@ export const updateProfile = async (profileData, profilePicture, resume) => {
       formData.append('resume', resume);
     }
 
-    const response = await httpClient.post(API_ENDPOINTS.UPDATE_PROFILE, formData, {
+    const response = await httpClient.put(API_ENDPOINTS.UPDATE_PROFILE, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -55,7 +55,7 @@ export const updateProfile = async (profileData, profilePicture, resume) => {
  */
 export const getProfilePictureUrl = async () => {
   try {
-    const response = await httpClient.get(`${API_ENDPOINTS.PROFILE}/picture`, {
+    const response = await httpClient.get(API_ENDPOINTS.PROFILE_PICTURE, {
       responseType: 'blob',
     });
 
@@ -72,7 +72,7 @@ export const getProfilePictureUrl = async () => {
  */
 export const downloadResume = async () => {
   try {
-    const response = await httpClient.get(`${API_ENDPOINTS.PROFILE}/resume`, {
+    const response = await httpClient.get(API_ENDPOINTS.PROFILE_RESUME, {
       responseType: 'blob',
     });
 
@@ -96,7 +96,7 @@ export const downloadResume = async () => {
  */
 export const getResumeUrl = async () => {
   try {
-    const response = await httpClient.get(`${API_ENDPOINTS.PROFILE}/resume`, {
+    const response = await httpClient.get(API_ENDPOINTS.PROFILE_RESUME, {
       responseType: 'blob',
     });
 

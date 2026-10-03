@@ -57,13 +57,9 @@ export const JobProvider = ({ children }) => {
         // Load saved jobs from backend
         const loadSavedJobs = async () => {
           try {
+            // Backend returns a plain JobDto[] (no savedAt — the saved_jobs table doesn't store one)
             const savedJobsData = await savedJobService.getSavedJobs();
-            // Transform backend data to match frontend format
-            const transformedJobs = savedJobsData.map(savedJob => ({
-              ...savedJob.job,
-              savedAt: savedJob.savedAt
-            }));
-            setSavedJobs(transformedJobs);
+            setSavedJobs(savedJobsData);
           } catch (error) {
             console.error('Error loading saved jobs from backend:', error);
             // Fallback to localStorage if backend fails

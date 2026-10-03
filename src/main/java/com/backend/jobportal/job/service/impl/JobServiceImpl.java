@@ -6,6 +6,7 @@ import com.backend.jobportal.entity.JobPortalUser;
 import com.backend.jobportal.job.dto.JobDto;
 import com.backend.jobportal.job.repository.JobRepository;
 import com.backend.jobportal.job.service.IJobService;
+import com.backend.jobportal.job.util.JobUtil;
 import com.backend.jobportal.user.repository.JobPortalUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class JobServiceImpl implements IJobService {
     @Override
     public List<JobDto> getAllJobs() {
         List<Job> jobs = jobRepository.findAll();
-        List<JobDto> dto = jobs.stream().map(this::transformToDto).toList();
+        List<JobDto> dto = jobs.stream().map(JobUtil::transformJobToDto).toList();
         return dto;
     }
 
@@ -46,7 +47,7 @@ public class JobServiceImpl implements IJobService {
         }
 
         List<Job> jobs = jobRepository.findByCompanyId(company.getId());
-        return jobs.stream().map(this::transformToDto).toList();
+        return jobs.stream().map(JobUtil::transformJobToDto).toList();
     }
 
     @Override
@@ -75,7 +76,7 @@ public class JobServiceImpl implements IJobService {
 
         Job updatedJob = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
-        return transformToDto(updatedJob);
+        return JobUtil.transformJobToDto(updatedJob);
     }
 
     @Override
@@ -90,68 +91,12 @@ public class JobServiceImpl implements IJobService {
             throw new RuntimeException("You must be associated with a company to post a job");
         }
 
-        Job job = transformDtoToJob(jobDto);
+        Job job = JobUtil.transformDtoToJob(jobDto);
         job.setCompany(company);
         job.setPostedDate(Instant.now());
         job.setApplicationsCount(0);
         job.setStatus("DRAFT");
         Job savedJob = jobRepository.save(job);
-        return transformToDto(savedJob);
-    }
-
-    // Copies the writable fields of a JobDto into a brand-new Job entity. company/postedDate
-    // are set separately by createJob; id/createdAt/updatedAt/createdBy/updatedBy are
-    // DB-generated/audit-managed.
-    private Job transformDtoToJob(JobDto jobDto) {
-        Job job = new Job();
-        job.setTitle(jobDto.title());
-        job.setLocation(jobDto.location());
-        job.setWorkType(jobDto.workType());
-        job.setJobType(jobDto.jobType());
-        job.setCategory(jobDto.category());
-        job.setExperienceLevel(jobDto.experienceLevel());
-        job.setSalaryMin(jobDto.salaryMin());
-        job.setSalaryMax(jobDto.salaryMax());
-        job.setSalaryCurrency(jobDto.salaryCurrency());
-        job.setSalaryPeriod(jobDto.salaryPeriod());
-        job.setDescription(jobDto.description());
-        job.setRequirements(jobDto.requirements());
-        job.setBenefits(jobDto.benefits());
-        job.setApplicationDeadline(jobDto.applicationDeadline());
-        job.setApplicationsCount(jobDto.applicationsCount());
-        job.setFeatured(jobDto.featured());
-        job.setUrgent(jobDto.urgent());
-        job.setRemote(jobDto.remote());
-        job.setStatus(jobDto.status());
-        return job;
-    }
-
-    private JobDto transformToDto(Job job) {
-        return new JobDto(
-                job.getId(),
-                job.getTitle(),
-                job.getCompany() != null ? job.getCompany().getId() : null,
-                job.getCompany() != null ? job.getCompany().getName() : null,
-                job.getCompany() != null ? job.getCompany().getLogo() : null,
-                job.getLocation(),
-                job.getWorkType(),
-                job.getJobType(),
-                job.getCategory(),
-                job.getExperienceLevel(),
-                job.getSalaryMin(),
-                job.getSalaryMax(),
-                job.getSalaryCurrency(),
-                job.getSalaryPeriod(),
-                job.getDescription(),
-                job.getRequirements(),
-                job.getBenefits(),
-                job.getPostedDate(),
-                job.getApplicationDeadline(),
-                job.getApplicationsCount(),
-                job.getFeatured(),
-                job.getUrgent(),
-                job.getRemote(),
-                job.getStatus()
-        );
+        return JobUtil.transformJobToDto(savedJob);
     }
 }

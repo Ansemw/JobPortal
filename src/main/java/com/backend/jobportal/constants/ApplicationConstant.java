@@ -17,6 +17,8 @@ public class ApplicationConstant {
     public static final String STATUS_NEW = "NEW";
     public static final String STATUS_CLOSED = "CLOSED";
     public static final String SYSTEM = "SYSTEM";
+    public static final String STATUS_PENDING = "PENDING";
+
 
 
 

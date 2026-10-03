@@ -5,8 +5,7 @@ import com.backend.jobportal.company.repository.CompanyRepository;
 import com.backend.jobportal.company.service.ICompanyService;
 import com.backend.jobportal.constants.ApplicationConstant;
 import com.backend.jobportal.entity.Company;
-import com.backend.jobportal.entity.Job;
-import com.backend.jobportal.job.dto.JobDto;
+import com.backend.jobportal.job.util.JobUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -128,7 +127,7 @@ public class CompanyServiceImpl implements ICompanyService {
                 company.getEmployees(),
                 company.getWebsite(),
                 company.getCreatedAt(),
-                company.getJobs().stream().map(job -> transformJobToDto(job)).collect(Collectors.toList())
+                company.getJobs().stream().map(JobUtil::transformJobToDto).collect(Collectors.toList())
         );
     }
     private CompanyDto transformCompanyToDtoAdmin(Company company) {
@@ -147,33 +146,4 @@ public class CompanyServiceImpl implements ICompanyService {
                 company.getCreatedAt(),
                null);
     }
-    private JobDto transformJobToDto(Job job) {
-        return new JobDto(
-                job.getId(),
-                job.getTitle(),
-                job.getCompany().getId(),
-                job.getCompany().getName(),
-                job.getCompany().getLogo(),
-                job.getLocation(),
-                job.getWorkType(),
-                job.getJobType(),
-                job.getCategory(),
-                job.getExperienceLevel(),
-                job.getSalaryMin(),
-                job.getSalaryMax(),
-                job.getSalaryCurrency(),
-                job.getSalaryPeriod(),
-                job.getDescription(),
-                job.getRequirements(),
-                job.getBenefits(),
-                job.getPostedDate(),
-                job.getApplicationDeadline(),
-                job.getApplicationsCount(),
-                job.getFeatured(),
-                job.getUrgent(),
-                job.getRemote(),
-                job.getStatus()
-        );
-    }
-
 }

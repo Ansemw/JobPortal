@@ -50,4 +50,17 @@ public class PathConfig {
                 ,"/api/jobs/{jobId}/status/employer"
                 );
     }
+
+    @Bean(name = "jobSeekerPaths")
+    public List<String> jobSeekerPaths() {
+        return List.of(
+                "/api/profiles/jobseeker"
+                ,"/api/profiles/picture/jobseeker"
+                ,"/api/profiles/resume/jobseeker"
+                ,"/api/job-actions/saved-jobs/{jobId}/jobseeker"
+                ,"/api/job-actions/saved-jobs/jobseeker"
+                ,"/api/job-actions/job-application/jobseeker"
+                ,"/api/job-actions/job-application/{jobId}/jobseeker"
+        );
+    }
 }

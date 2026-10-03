@@ -2,7 +2,7 @@ import httpClient from '../config/httpClient';
 import { API_ENDPOINTS } from '../config/api';
 
 /**
- * Get all saved jobs for the current user
+ * Get all saved jobs for the current user (backend returns a JobDto[])
  */
 export const getSavedJobs = async () => {
   try {
@@ -28,12 +28,12 @@ export const getSavedJobIds = async () => {
 };
 
 /**
- * Save a job
+ * Save a job (idempotent PUT; backend returns the saved JobDto)
  * @param {number} jobId - The job ID to save
  */
 export const saveJob = async (jobId) => {
   try {
-    const response = await httpClient.post(API_ENDPOINTS.SAVE_JOB(jobId));
+    const response = await httpClient.put(API_ENDPOINTS.SAVE_JOB(jobId));
     return response.data;
   } catch (error) {
     console.error('Error saving job:', error);
