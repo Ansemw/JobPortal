@@ -3,6 +3,7 @@ package com.backend.jobportal.jobactions.controller;
 import com.backend.jobportal.job.dto.JobDto;
 import com.backend.jobportal.jobactions.dto.ApplyJobRequestDto;
 import com.backend.jobportal.jobactions.dto.JobApplicationDto;
+import com.backend.jobportal.jobactions.dto.UpdateJobApplicationDto;
 import com.backend.jobportal.jobactions.service.IJobActionsService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,25 @@ public class JobActionsController {
         String email = authentication.getName();
         List<JobApplicationDto> applications= jobActionsService.getJobApplications(email);
         return ResponseEntity.ok(applications);
+    }
+
+    @GetMapping(path = "/job-application/{jobId}/employer", version = "1.0")
+    public ResponseEntity<List<JobApplicationDto>> getJobApplicationsByJob(@PathVariable Long jobId, Authentication authentication) {
+
+        String email = authentication.getName();
+        List<JobApplicationDto> applications= jobActionsService.getJobApplicationsByJob(email, jobId);
+        return ResponseEntity.ok(applications);
+    }
+
+    @PatchMapping(path = "/job-application/employer", version = "1.0")
+    public ResponseEntity<String> updateJobApplicationStatus(@RequestBody @Valid UpdateJobApplicationDto updateJobApplicationDto, Authentication authentication) {
+
+        String email = authentication.getName();
+        boolean isUpdated = jobActionsService.updateJobApplicationStatus(email, updateJobApplicationDto);
+        if (!isUpdated) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Application not updated");
+        }
+        return ResponseEntity.ok("Application updated successfully");
     }
 }
 

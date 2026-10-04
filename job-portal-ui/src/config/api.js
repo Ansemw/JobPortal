@@ -77,9 +77,9 @@ export const API_ENDPOINTS = {
   MY_APPLICATIONS: "/job-actions/job-application/jobseeker",
   APPLIED_JOB_IDS: "/job-applications/applied-job-ids",
   CHECK_APPLIED: (jobId) => `/job-applications/check/${jobId}`,
-  APPLICATIONS_BY_JOB: (jobId) => `/job-applications/job/${jobId}`,
+  APPLICATIONS_BY_JOB: (jobId) => `/job-actions/job-application/${jobId}/employer`,
   COMPANY_APPLICATIONS: "/job-applications/company-applications",
-  UPDATE_APPLICATION_STATUS: (applicationId) => `/job-applications/${applicationId}/status`,
+  UPDATE_APPLICATION_STATUS: "/job-actions/job-application/employer",
 };
 
 // HTTP Headers

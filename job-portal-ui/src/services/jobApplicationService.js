@@ -103,13 +103,13 @@ export const getCompanyApplications = async () => {
  * Update application status (Employer)
  * @param {number} applicationId - The application ID
  * @param {string} status - The new status
- * @param {string} notes - Optional notes
+ * @param {string} notes - Optional notes (omitted from the request when not provided)
  */
-export const updateApplicationStatus = async (applicationId, status, notes = '') => {
+export const updateApplicationStatus = async (applicationId, status, notes) => {
   try {
     const response = await httpClient.patch(
-      API_ENDPOINTS.UPDATE_APPLICATION_STATUS(applicationId),
-      { status, notes }
+      API_ENDPOINTS.UPDATE_APPLICATION_STATUS,
+      { applicationId, status, notes }
     );
     return response.data;
   } catch (error) {

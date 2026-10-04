@@ -1,6 +1,7 @@
 package com.backend.jobportal.security;
 
 import com.backend.jobportal.security.filter.JwtTokenValidatorFilter;
+import com.backend.jobportal.security.util.CorsPropertiesUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,7 @@ private final List<String> employerPaths;
 @Qualifier("jobSeekerPaths")
 private final List<String> jobSeekerPaths;
 
+private final CorsPropertiesUtils  corsPropertiesUtils;
 
     @Bean
     SecurityFilterChain customSecurityFilterChain(HttpSecurity http) {
@@ -101,10 +103,11 @@ private final List<String> jobSeekerPaths;
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
-        config.setAllowedMethods(List.of("*"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+        config.setAllowedOrigins(corsPropertiesUtils.getAllowedOrigins());
+        config.setAllowedMethods(corsPropertiesUtils.getAllowedMethods());
+        config.setAllowedHeaders(corsPropertiesUtils.getAllowedHeaders());
+        config.setAllowCredentials(corsPropertiesUtils.isAllowCredentials());
+        config.setMaxAge(corsPropertiesUtils.getMaxAge());
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;

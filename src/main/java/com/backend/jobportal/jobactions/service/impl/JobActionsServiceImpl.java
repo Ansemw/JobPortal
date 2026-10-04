@@ -9,6 +9,7 @@ import com.backend.jobportal.job.repository.JobRepository;
 import com.backend.jobportal.job.util.JobUtil;
 import com.backend.jobportal.jobactions.dto.ApplyJobRequestDto;
 import com.backend.jobportal.jobactions.dto.JobApplicationDto;
+import com.backend.jobportal.jobactions.dto.UpdateJobApplicationDto;
 import com.backend.jobportal.jobactions.repository.JobApplicationRepository;
 import com.backend.jobportal.user.profile.util.ProfileUtil;
 import com.backend.jobportal.jobactions.service.IJobActionsService;
@@ -131,6 +132,49 @@ public class JobActionsServiceImpl implements IJobActionsService {
         return jobApplicationRepository.findByUserIdOrderByAppliedAtDesc(user.getId()).stream()
                 .map(this::transformApplicationToDto)
                 .toList();
+    }
+
+    // Read-only (class default). The job must belong to the calling employer's own company.
+    @Override
+    public List<JobApplicationDto> getJobApplicationsByJob(String email, Long jobId) {
+        JobPortalUser employer = jobPortalUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (employer.getCompany() == null) {
+            throw new RuntimeException("Employer is not associated with a company");
+        }
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        if (!job.getCompany().getId().equals(employer.getCompany().getId())) {
+            throw new RuntimeException("This job doesn't belong to your company");
+        }
+
+        return jobApplicationRepository.findByJobIdOrderByAppliedAtDesc(jobId).stream()
+                .map(this::transformApplicationToDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public boolean updateJobApplicationStatus(String email, UpdateJobApplicationDto updateJobApplicationDto) {
+        JobPortalUser employer = jobPortalUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (employer.getCompany() == null) {
+            throw new RuntimeException("Employer is not associated with a company");
+        }
+
+        // The query only matches applications of the employer's own company and keeps the stored
+        // notes when notes is null, so 0 rows means the application doesn't exist or isn't theirs.
+        int updatedRows = jobApplicationRepository.updateStatusById(
+                updateJobApplicationDto.applicationId(),
+                updateJobApplicationDto.status().name(),
+                updateJobApplicationDto.notes(),
+                email,
+                employer.getCompany().getId());
+        return updatedRows > 0;
     }
 
     private JobApplicationDto transformApplicationToDto(JobApplication application) {

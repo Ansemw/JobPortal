@@ -48,6 +48,8 @@ public class PathConfig {
         return List.of(
                 "/api/jobs/employer"
                 ,"/api/jobs/{jobId}/status/employer"
+                ,"/api/job-actions/job-application/{jobId}/employer"
+                ,"/api/job-actions/job-application/employer"
                 );
     }
 

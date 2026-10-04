@@ -5,6 +5,15 @@ import { useAuth } from '../context/AuthContext';
 import { useJobsData } from '../contexts/JobsDataContext';
 import * as jobApplicationService from '../services/jobApplicationService';
 
+// `value` must match the backend's JobApplicationStatus enum names; `key` is the filter-tab key.
+const APPLICATION_STATUSES = [
+  { key: 'applied', value: 'PENDING', label: 'Applied' },
+  { key: 'inreview', value: 'IN_REVIEW', label: 'In Review' },
+  { key: 'interview', value: 'INTERVIEW', label: 'Interview' },
+  { key: 'hired', value: 'HIRED', label: 'Hired' },
+  { key: 'rejected', value: 'REJECTED', label: 'Rejected' },
+];
+
 const JobApplicants = () => {
   const { jobId } = useParams();
   const { getJobById } = useJobsData();
@@ -17,6 +26,8 @@ const JobApplicants = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  // Unsaved status/notes edits, keyed by applicationId: { [id]: { status?, notes? } }
+  const [drafts, setDrafts] = useState({});
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -129,6 +140,7 @@ const JobApplicants = () => {
 
           return {
             applicationId: app.id,
+            notes: app.notes || '',
             applicant: {
               name: app.userName,
               email: app.userEmail,
@@ -164,23 +176,46 @@ const JobApplicants = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  const handleStatusChange = async (applicationId, newStatus) => {
-    try {
-      await jobApplicationService.updateApplicationStatus(applicationId, newStatus);
+  const updateDraft = (applicationId, changes) => {
+    setDrafts(prev => ({ ...prev, [applicationId]: { ...prev[applicationId], ...changes } }));
+  };
 
-      // Update local state
+  const hasChanges = (application) => {
+    const draft = drafts[application.applicationId];
+    if (!draft) return false;
+    return (
+      (draft.status ?? application.applicant.status) !== application.applicant.status ||
+      (draft.notes ?? application.notes) !== application.notes
+    );
+  };
+
+  // Status and notes are saved together. The backend overwrites notes with whatever it receives,
+  // so the saved notes are resent when only the status was edited.
+  const handleUpdateApplication = async (application) => {
+    const { applicationId } = application;
+    const draft = drafts[applicationId] || {};
+    const status = draft.status ?? application.applicant.status;
+    const notes = draft.notes ?? application.notes;
+
+    try {
+      await jobApplicationService.updateApplicationStatus(applicationId, status, notes);
+
       setApplications(prev =>
         prev.map(app =>
           app.applicationId === applicationId
-            ? { ...app, applicant: { ...app.applicant, status: newStatus } }
+            ? { ...app, notes, applicant: { ...app.applicant, status } }
             : app
         )
       );
+      setDrafts(prev => {
+        const { [applicationId]: _saved, ...rest } = prev;
+        return rest;
+      });
 
-      showNotification('Application status updated successfully!');
+      showNotification('Application updated successfully!');
     } catch (error) {
-      console.error('Error updating application status:', error);
-      showNotification('Failed to update application status', 'error');
+      console.error('Error updating application:', error);
+      showNotification('Failed to update application', 'error');
     }
   };
 
@@ -197,17 +232,20 @@ const JobApplicants = () => {
     }
   };
 
+  const getStatusLabel = (status) =>
+    APPLICATION_STATUSES.find(s => s.value === status)?.label || status;
+
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Applied':
+      case 'PENDING':
         return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'In Review':
+      case 'IN_REVIEW':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Interview':
+      case 'INTERVIEW':
         return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'Rejected':
+      case 'REJECTED':
         return 'bg-red-100 text-red-800 border-red-200';
-      case 'Hired':
+      case 'HIRED':
         return 'bg-green-100 text-green-800 border-green-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -216,16 +254,14 @@ const JobApplicants = () => {
 
   const filteredApplications = applications.filter(app => {
     if (filter === 'all') return true;
-    return app.applicant.status.toLowerCase().replace(' ', '') === filter;
+    return APPLICATION_STATUSES.find(s => s.key === filter)?.value === app.applicant.status;
   });
 
   const statusCounts = {
     all: applications.length,
-    applied: applications.filter(app => app.applicant.status === 'Applied').length,
-    inreview: applications.filter(app => app.applicant.status === 'In Review').length,
-    interview: applications.filter(app => app.applicant.status === 'Interview').length,
-    hired: applications.filter(app => app.applicant.status === 'Hired').length,
-    rejected: applications.filter(app => app.applicant.status === 'Rejected').length,
+    ...Object.fromEntries(
+      APPLICATION_STATUSES.map(s => [s.key, applications.filter(app => app.applicant.status === s.value).length])
+    ),
   };
 
   // Show loading state while auth is initializing
@@ -345,11 +381,7 @@ const JobApplicants = () => {
           <div className="flex flex-wrap gap-2">
             {[
               { key: 'all', label: 'All Applications' },
-              { key: 'applied', label: 'Applied' },
-              { key: 'inreview', label: 'In Review' },
-              { key: 'interview', label: 'Interview' },
-              { key: 'hired', label: 'Hired' },
-              { key: 'rejected', label: 'Rejected' }
+              ...APPLICATION_STATUSES
             ].map(({ key, label }) => (
               <button
                 key={key}
@@ -424,7 +456,7 @@ const JobApplicants = () => {
 
                     <div className="flex items-center space-x-3 mb-4">
                       <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(application.applicant.status)}`}>
-                        {application.applicant.status}
+                        {getStatusLabel(application.applicant.status)}
                       </span>
                     </div>
                   </div>
@@ -435,19 +467,38 @@ const JobApplicants = () => {
                         Update Status
                       </label>
                       <select
-                        value={application.applicant.status}
-                        onChange={(e) => handleStatusChange(application.applicationId, e.target.value)}
+                        value={drafts[application.applicationId]?.status ?? application.applicant.status}
+                        onChange={(e) => updateDraft(application.applicationId, { status: e.target.value })}
                         className="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 outline-none"
                       >
-                        <option value="Applied">Applied</option>
-                        <option value="In Review">In Review</option>
-                        <option value="Interview">Interview</option>
-                        <option value="Hired">Hired</option>
-                        <option value="Rejected">Rejected</option>
+                        {APPLICATION_STATUSES.map(({ value, label }) => (
+                          <option key={value} value={value}>{label}</option>
+                        ))}
                       </select>
                     </div>
 
+                    <div className="mb-4">
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        Notes
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={drafts[application.applicationId]?.notes ?? application.notes}
+                        onChange={(e) => updateDraft(application.applicationId, { notes: e.target.value })}
+                        placeholder="Add private notes about this applicant"
+                        className="w-full lg:w-64 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300 outline-none resize-y"
+                      />
+                    </div>
+
                     <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handleUpdateApplication(application)}
+                        disabled={!hasChanges(application)}
+                        className="px-6 py-2 bg-red-600 dark:bg-red-700 text-white rounded-xl hover:bg-red-700 dark:hover:bg-red-600 transition-colors font-semibold text-center disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Update
+                      </button>
+
                       <button
                         onClick={() => {
                           setSelectedApplicant(application.applicant);
